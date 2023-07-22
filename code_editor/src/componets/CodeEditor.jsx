@@ -1,13 +1,31 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Highlight, themes } from "prism-react-renderer";
 import styled from "styled-components";
 
 const CodeEditor = () => {
-  const [code, setCode] = useState("");
+  const [code, setCode] = useState(`
+  <Editor
+        value={code}
+        onChange={(e) => setCode(e.target.value)}
+        placeholder="Enter your code here..."
+      />
+`);
+
+  useEffect(() => {
+    const data = localStorage.getItem("code");
+    if (data) {
+      setCode(data);
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("code", code);
+  }, [code]);
 
   const Container = styled.div`
     display: flex;
     flex-direction: row;
+    text-align: center;
     item-align: center;
     justify-content: center;
     gap: 2rem;
@@ -20,6 +38,7 @@ const CodeEditor = () => {
   const Editor = styled.textarea`
     flex: 1;
     outline: none;
+    font-family: "Courier New", Courier, monospace;
     height: 90%;
     width: 90%;
     border: none;
@@ -27,6 +46,10 @@ const CodeEditor = () => {
     padding: 1rem;
     background-color: #1e1e1e;
     color: white;
+    resize: none;
+    border-radius: 5px;
+    cursor: text;
+    overflow: scroll;
     @media (max-width: 768px) {
       height: 50vh;
     }
@@ -49,7 +72,12 @@ const CodeEditor = () => {
       <Editor
         value={code}
         onChange={(e) => setCode(e.target.value)}
-        placeholder="Type some code..."
+        placeholder="Enter your code here..."
+        required={true}
+        name="code"
+        rows={10}
+        cols={50}
+        autofocus={true}
       />
       <Highlight theme={themes.dracula} code={code} language="jsx">
         {({ className, style, tokens, getLineProps, getTokenProps }) => (
